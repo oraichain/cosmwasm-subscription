@@ -1,6 +1,11 @@
+use std::str::FromStr;
+
 #[cfg(not(feature = "library"))]
 use cosmwasm_std::entry_point;
-use cosmwasm_std::{to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult};
+use cosmwasm_std::{
+    to_binary, BankMsg, Binary, Coin, CosmosMsg, Deps, DepsMut, Env, MessageInfo, Response,
+    StdResult, Uint128,
+};
 
 use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
 
@@ -45,7 +50,36 @@ pub fn execute(
         ExecuteMsg::AddSubscriptionOption {
             subscription_option,
         } => execute_add_subscription_option(deps, info, subscription_option),
+        ExecuteMsg::Withdraw {
+            amount,
+            denom,
+            beneficiary,
+        } => execute_withdraw(deps, info, amount, denom, beneficiary),
     }
+}
+
+fn execute_withdraw(
+    deps: DepsMut,
+    info: MessageInfo,
+    amount: String,
+    denom: String,
+    beneficiary: String,
+) -> Result<Response, ContractError> {
+    if !state_reads::is_admin(deps.as_ref(), info.sender)? {
+        return Err(ContractError::Unauthorized {});
+    }
+
+    let coin = Coin {
+        denom,
+        amount: Uint128::from_str(amount.as_str()).unwrap(),
+    };
+    let bank_msg = BankMsg::Send {
+        to_address: beneficiary,
+        amount: vec![coin],
+    };
+    let cosmos_msg = CosmosMsg::Bank(bank_msg);
+
+    return Ok(Response::new().add_message(cosmos_msg));
 }
 
 fn execute_add_subscription_option(

@@ -2,7 +2,7 @@
 mod tests {
     use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info, MockApi, MockQuerier};
     use cosmwasm_std::{
-        coins, from_binary, Addr, Coin, Deps, DepsMut, MemoryStorage, OwnedDeps, Response, Uint128,
+        coins, from_binary, Coin, DepsMut, MemoryStorage, OwnedDeps, Response, Uint128,
     };
 
     use crate::error::ContractError;
@@ -78,7 +78,7 @@ mod tests {
 
     #[test]
     fn instantiate_success() {
-        let mut deps = instantiate_contract();
+        let mut _deps = instantiate_contract();
     }
 
     #[test]

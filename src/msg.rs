@@ -18,6 +18,12 @@ pub enum ExecuteMsg {
     AddSubscriptionOption {
         subscription_option: PaymentOption,
     },
+
+    Withdraw {
+        amount: String,
+        denom: String,
+        beneficiary: String,
+    },
 }
 
 #[derive(Serialize, Deserialize, Clone, PartialEq, JsonSchema, Debug)]
