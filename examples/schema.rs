@@ -3,8 +3,9 @@ use std::fs::create_dir_all;
 
 use cosmwasm_schema::{export_schema, remove_schemas, schema_for};
 
-use subscription::msg::{ExecuteMsg, InstantiateMsg, QueryMsg}; //, QueryMsg};
-                                                               //use token::state::State;
+use subscription::execute_messages::msg::ExecuteMsg;
+use subscription::msg::{InstantiateMsg, QueryMsg}; //, QueryMsg};
+                                                   //use token::state::State;
 
 //CountResponse
 fn main() {

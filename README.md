@@ -1,50 +1,43 @@
-# cw20_elevated  
+# Subscription    
 
 ## Overview  
 
-CW20 that has been extended to allow the minter to exectue some arbitrary changes to the state of balances.  
-Uses a lighthouse as minter. Arbitrary changes include burn and transfer.  
+Contract that implements a subscription system. Admin defines subscription options for a given price.   
 
-## Dependencies  
+## Subscription Options  
 
-Dependencies are the same as the base CW20 repository. 
-We use version 0.8.X of the CW repository to enable compatibility with cosmwasm_std 0.16, which is the version of the std used by the Terra Blockchain. 
+Subscription options are defined by the following enums and structs:  
 
-## How to use 
-
-This uses the same methods as the cw20 token, you can refer to the cw20 documentation for details.  
-
-Be careful some data must be set at instantiation time:   
-- Minter address must be defined in Instantiate  
-- Marketing data can only be changed by one allowed address which is defined independently from maintainer  
-
-
-The additional messages, which can only be called by the minter, are:  
-
-```rust
-
+```rust 
 #[derive(Serialize, Deserialize, Clone, PartialEq, JsonSchema, Debug)]
 #[serde(rename_all = "snake_case")]
-pub enum ExecuteElevatedMsg {
-    TransferToMinter { from: String, amount: Uint128},  
-    Burn { from: String, amount: Uint128 },
+pub enum DurationUnit {
+    Day,
+    Week,
+    Month,
+    Year,
 }
 
-```  
-
-Typically the only message called in the Vault + cw20_elevated setup will be Burn.    
-
-
-To call these messages, we have added a new ExecuteMsg entry:  
-
-```rust  
+#[derive(Serialize, Deserialize, Clone, PartialEq, JsonSchema, Debug)]
+pub struct SubscriptionDuration {
+    pub amount_units: u64,
+    pub duration_unit: DurationUnit,
+}
 
 #[derive(Serialize, Deserialize, Clone, PartialEq, JsonSchema, Debug)]
-#[serde(rename_all = "snake_case")]
-pub enum ExecuteMsg {
-    // EXTENSIONS
-    ElevatedHook{elevated_msg: ExecuteElevatedMsg},
-    ...
-
-} 
+pub struct PaymentOption {
+    pub subscription_duration: SubscriptionDuration,
+    pub price: Coin,
+}
 ```
+
+This gives the admin flexibility in defining subscription durations.   
+The contract also handles the definition of multiple subscription options, which means it is possible to create discounts for longer term subscriptions.  
+
+
+## Improvements  
+For now, the contract only handles lump sum payments, might be possible to create some kind of recurring payment instead. Using allowances?  
+
+
+
+

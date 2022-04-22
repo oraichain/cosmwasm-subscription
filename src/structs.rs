@@ -1,8 +1,7 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use cosmwasm_std::{Addr, Coin};
-use cw_storage_plus::{Item, Map};
+use cosmwasm_std::Coin;
 
 #[derive(Serialize, Deserialize, Clone, PartialEq, JsonSchema, Debug)]
 #[serde(rename_all = "snake_case")]
@@ -49,9 +48,3 @@ impl PaymentOption {
         return self.subscription_duration.amount_units * amount_days * 86400;
     }
 }
-
-pub const ADMIN: Item<Addr> = Item::new("admin");
-
-pub const SUBSCRIPTIONS: Map<Addr, u64> = Map::new("subscriptions");
-
-pub const SUBSCRIPTION_OPTIONS: Item<Vec<PaymentOption>> = Item::new("subscription_options");

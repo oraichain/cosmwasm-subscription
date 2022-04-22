@@ -1,9 +1,9 @@
 use cosmwasm_std::{Addr, DepsMut, Env};
 
-use crate::{
-    state::{PaymentOption, SUBSCRIPTIONS, SUBSCRIPTION_OPTIONS},
-    ContractError,
-};
+use crate::state::state_entries::{SUBSCRIPTIONS, SUBSCRIPTION_OPTIONS};
+use crate::structs::PaymentOption;
+
+use crate::ContractError;
 
 pub fn add_subcription_option(
     deps: DepsMut,

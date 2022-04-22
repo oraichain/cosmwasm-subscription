@@ -1,10 +1,10 @@
 use cosmwasm_std::{Addr, Deps, Env};
 
-use crate::query::SubscriptionOptionsResponse;
-use crate::state::{
-    PaymentOption, SubscriptionDuration, ADMIN, SUBSCRIPTIONS, SUBSCRIPTION_OPTIONS,
-};
-use crate::{query::SubscriptionStatusResponse, ContractError};
+use crate::query::query_responses::SubscriptionOptionsResponse;
+use crate::state::state_entries::{ADMIN, SUBSCRIPTIONS, SUBSCRIPTION_OPTIONS};
+use crate::structs::{PaymentOption, SubscriptionDuration};
+
+use crate::{query::query_responses::SubscriptionStatusResponse, ContractError};
 
 pub fn is_valid_subscription_option(
     deps: Deps,
@@ -54,7 +54,7 @@ pub fn get_subscription_options(deps: Deps) -> Result<SubscriptionOptionsRespons
     });
 }
 
-pub fn is_admin(deps: Deps, addr: Addr) -> Result<bool, ContractError> {
+pub fn is_contract_admin(deps: Deps, addr: Addr) -> Result<bool, ContractError> {
     let admin = ADMIN.load(deps.storage)?;
 
     return Ok(admin == addr);

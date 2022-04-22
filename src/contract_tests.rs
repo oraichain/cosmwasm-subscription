@@ -6,11 +6,14 @@ mod tests {
     };
 
     use crate::error::ContractError;
-    use crate::msg::{ExecuteMsg, InstantiateMsg, QueryMsg};
+    use crate::execute_messages::msg::ExecuteMsg;
+    use crate::execute_messages::msg_admin::AdminExecuteMsg;
+    use crate::msg::InstantiateMsg;
+    use crate::query::query_messages::QueryMsg;
 
     use crate::contract::{execute, instantiate, query};
-    use crate::query::SubscriptionStatusResponse;
-    use crate::state::{DurationUnit, PaymentOption, SubscriptionDuration};
+    use crate::query::query_responses::SubscriptionStatusResponse;
+    use crate::structs::{DurationUnit, PaymentOption, SubscriptionDuration};
 
     const TEST_DENOM: &str = "uusd";
     const TEST_CREATOR: &str = "creator";
@@ -53,9 +56,10 @@ mod tests {
             },
         };
 
-        let msg = ExecuteMsg::AddSubscriptionOption {
+        let temp = AdminExecuteMsg::AddSubscriptionOption {
             subscription_option: subscription_option,
         };
+        let msg = ExecuteMsg::Admin(temp);
 
         let info = mock_info(TEST_CREATOR, &[]); //&coins(1000, TEST_DENOM));
 
