@@ -1,1 +1,0 @@
-b4bad7ba28f9ba21842873857dbaa0fafa2e2ce26a536d273908419d3c1a07aa  cw20_elevated.wasm

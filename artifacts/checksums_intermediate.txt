@@ -1,1 +1,0 @@
-41b45df7a9cb71933406439a9e0814c6e36b652ebd4e2a72bbf2541bf52873b0  ./target/wasm32-unknown-unknown/release/cw20_elevated.wasm
