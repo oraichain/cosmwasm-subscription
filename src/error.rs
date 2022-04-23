@@ -14,13 +14,16 @@ pub enum ContractError {
 
     // payable
     #[error("Payable Contract")]
-    RequiresFunds {},
+    PayableContract {},
 
     #[error("Single Currency Accepted")]
     SingleCurrencyPayable {},
 
     #[error("Funds amount invalid")]
     InvalidFundsAmount {},
+
+    #[error("Invalid Funds Denomination")]
+    InvalidFundsDenomination {},
 
     #[error("Subscription Option Does not exist")]
     InvalidSubcriptionOption {},

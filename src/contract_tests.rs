@@ -12,7 +12,7 @@ mod tests {
     use crate::query::query_messages::QueryMsg;
 
     use crate::contract::{execute, instantiate, query};
-    use crate::query::query_responses::SubscriptionStatusResponse;
+    use crate::query::query_responses::{SubscriptionOptionsResponse, SubscriptionStatusResponse};
     use crate::structs::{DurationUnit, PaymentOption, SubscriptionDuration};
 
     const TEST_DENOM: &str = "uusd";
@@ -42,7 +42,7 @@ mod tests {
         return deps;
     }
 
-    fn add_subscription_option(deps: DepsMut) -> Result<Response, ContractError> {
+    fn add_default_subscription_option(deps: DepsMut) -> Result<Response, ContractError> {
         let subscription_duration = SubscriptionDuration {
             duration_unit: TEST_DURATION_UNIT, //DurationUnit::Day,
             amount_units: TEST_DURATION_UNIT_AMOUNT,
@@ -66,7 +66,7 @@ mod tests {
         return execute(deps, mock_env(), info, msg);
     }
 
-    fn subscribe(deps: DepsMut, funds: Coin) -> Result<Response, ContractError> {
+    fn subscribe(deps: DepsMut, subscriber: &str, funds: Coin) -> Result<Response, ContractError> {
         let subscription_duration = SubscriptionDuration {
             duration_unit: TEST_DURATION_UNIT, //DurationUnit::Day,
             amount_units: TEST_DURATION_UNIT_AMOUNT,
@@ -75,7 +75,7 @@ mod tests {
             subscription_option: subscription_duration,
         };
 
-        let info = mock_info(TEST_CREATOR, &[funds]); //&coins(1000, TEST_DENOM));
+        let info = mock_info(subscriber, &[funds]); //&coins(1000, TEST_DENOM));
 
         return execute(deps, mock_env(), info, msg);
     }
@@ -88,20 +88,48 @@ mod tests {
     #[test]
     fn add_subcription_option_successful() {
         let mut deps = instantiate_contract();
-        add_subscription_option(deps.as_mut()).unwrap();
+        add_default_subscription_option(deps.as_mut()).unwrap();
+    }
+
+    #[test]
+    fn add_subcription_option_rejected_unauthorized() {
+        let mut deps = instantiate_contract();
+        let subscription_duration = SubscriptionDuration {
+            duration_unit: TEST_DURATION_UNIT, //DurationUnit::Day,
+            amount_units: TEST_DURATION_UNIT_AMOUNT,
+        };
+
+        let subscription_option = PaymentOption {
+            subscription_duration: subscription_duration,
+            price: Coin {
+                denom: TEST_DENOM.to_string(),
+                amount: Uint128::from(TEST_PRICE),
+            },
+        };
+
+        let temp = AdminExecuteMsg::AddSubscriptionOption {
+            subscription_option: subscription_option,
+        };
+        let msg = ExecuteMsg::Admin(temp);
+
+        let info = mock_info(TEST_USER2, &[]); //&coins(1000, TEST_DENOM));
+
+        let res = execute(deps.as_mut(), mock_env(), info, msg).unwrap_err();
+
+        assert_eq!(res, ContractError::Unauthorized {});
     }
 
     #[test]
     fn subscribe_successful() {
         let mut deps = instantiate_contract();
-        add_subscription_option(deps.as_mut()).unwrap();
+        add_default_subscription_option(deps.as_mut()).unwrap();
 
         let funds = Coin {
             denom: TEST_DENOM.to_string(),
             amount: Uint128::from(TEST_PRICE),
         };
 
-        let _res = subscribe(deps.as_mut(), funds).unwrap();
+        let _res = subscribe(deps.as_mut(), TEST_CREATOR, funds).unwrap();
 
         let msg = QueryMsg::SubcriptionStatus {
             addr: TEST_CREATOR.to_string(),
@@ -112,16 +140,74 @@ mod tests {
     }
 
     #[test]
+    fn subscribe_rejected_invalid_currency() {
+        let mut deps = instantiate_contract();
+        add_default_subscription_option(deps.as_mut()).unwrap();
+
+        let funds = Coin {
+            denom: TEST_INVALID_DENOM.to_string(),
+            amount: Uint128::from(TEST_PRICE),
+        };
+
+        let res = subscribe(deps.as_mut(), TEST_CREATOR, funds).unwrap_err();
+
+        assert_eq!(res, ContractError::InvalidFundsDenomination {});
+    }
+
+    #[test]
+    fn subscribe_rejected_invalid_funds_amoun() {
+        let mut deps = instantiate_contract();
+        add_default_subscription_option(deps.as_mut()).unwrap();
+
+        let funds = Coin {
+            denom: TEST_DENOM.to_string(),
+            amount: Uint128::from(TEST_PRICE + 1000),
+        };
+
+        let res = subscribe(deps.as_mut(), TEST_CREATOR, funds).unwrap_err();
+
+        assert_eq!(res, ContractError::InvalidFundsAmount {});
+
+        let funds = Coin {
+            denom: TEST_DENOM.to_string(),
+            amount: Uint128::from(TEST_PRICE - 1000),
+        };
+
+        let res = subscribe(deps.as_mut(), TEST_CREATOR, funds).unwrap_err();
+
+        assert_eq!(res, ContractError::InvalidFundsAmount {});
+    }
+
+    #[test]
+    fn subscribe_rejected_payable() {
+        let mut deps = instantiate_contract();
+        add_default_subscription_option(deps.as_mut()).unwrap();
+
+        let subscription_duration = SubscriptionDuration {
+            duration_unit: TEST_DURATION_UNIT, //DurationUnit::Day,
+            amount_units: TEST_DURATION_UNIT_AMOUNT,
+        };
+        let msg = ExecuteMsg::Subscribe {
+            subscription_option: subscription_duration,
+        };
+
+        let info = mock_info(TEST_CREATOR, &[]); //&coins(1000, TEST_DENOM));
+        let res = execute(deps.as_mut(), mock_env(), info, msg).unwrap_err();
+
+        assert_eq!(res, ContractError::PayableContract {});
+    }
+
+    #[test]
     fn subscribe_expire() {
         let mut deps = instantiate_contract();
-        add_subscription_option(deps.as_mut()).unwrap();
+        add_default_subscription_option(deps.as_mut()).unwrap();
 
         let funds = Coin {
             denom: TEST_DENOM.to_string(),
             amount: Uint128::from(TEST_PRICE),
         };
 
-        let _res = subscribe(deps.as_mut(), funds).unwrap();
+        let _res = subscribe(deps.as_mut(), TEST_CREATOR, funds).unwrap();
 
         let msg = QueryMsg::SubcriptionStatus {
             addr: TEST_CREATOR.to_string(),
@@ -144,14 +230,14 @@ mod tests {
     #[test]
     fn subscribe_lengthened() {
         let mut deps = instantiate_contract();
-        add_subscription_option(deps.as_mut()).unwrap();
+        add_default_subscription_option(deps.as_mut()).unwrap();
 
         let funds = Coin {
             denom: TEST_DENOM.to_string(),
             amount: Uint128::from(TEST_PRICE),
         };
 
-        let _res = subscribe(deps.as_mut(), funds).unwrap();
+        let _res = subscribe(deps.as_mut(), TEST_CREATOR, funds).unwrap();
 
         let msg = QueryMsg::SubcriptionStatus {
             addr: TEST_CREATOR.to_string(),
@@ -175,7 +261,7 @@ mod tests {
             amount: Uint128::from(TEST_PRICE),
         };
 
-        let _res = subscribe(deps.as_mut(), funds).unwrap();
+        let _res = subscribe(deps.as_mut(), TEST_CREATOR, funds).unwrap();
 
         let msg = QueryMsg::SubcriptionStatus {
             addr: TEST_CREATOR.to_string(),
@@ -186,5 +272,55 @@ mod tests {
 
         println!("{:?}", data);
         assert!(data.is_valid);
+    }
+
+    #[test]
+    fn withdraw_successful() {
+        let mut deps = instantiate_contract();
+        add_default_subscription_option(deps.as_mut()).unwrap();
+
+        let funds = Coin {
+            denom: TEST_DENOM.to_string(),
+            amount: Uint128::from(TEST_PRICE),
+        };
+
+        let _res = subscribe(deps.as_mut(), TEST_USER, funds).unwrap();
+
+        let msg = ExecuteMsg::Admin(AdminExecuteMsg::Withdraw {
+            amount: TEST_PRICE.to_string(),
+            denom: TEST_DENOM.to_string(),
+            beneficiary: TEST_CREATOR.to_string(),
+        });
+        let info = mock_info(TEST_CREATOR, &[]);
+        let _res = execute(deps.as_mut(), mock_env(), info, msg);
+    }
+
+    #[test]
+    fn query_successful() {
+        let mut deps = instantiate_contract();
+        add_default_subscription_option(deps.as_mut()).unwrap();
+
+        let sub_option = PaymentOption {
+            subscription_duration: SubscriptionDuration {
+                amount_units: 10,
+                duration_unit: DurationUnit::Hour,
+            },
+            price: Coin {
+                denom: TEST_DENOM.to_string(),
+                amount: Uint128::from(TEST_PRICE),
+            },
+        };
+        let msg = ExecuteMsg::Admin(AdminExecuteMsg::AddSubscriptionOption {
+            subscription_option: sub_option,
+        });
+        let info = mock_info(TEST_CREATOR, &[]);
+        let _res = execute(deps.as_mut(), mock_env(), info, msg).unwrap();
+
+        let msg = QueryMsg::SubscriptionOptions {};
+        let res = query(deps.as_ref(), mock_env(), msg).unwrap();
+
+        let data: SubscriptionOptionsResponse = from_binary(&res).unwrap();
+
+        assert_eq!(data.subscription_options.len(), 2);
     }
 }

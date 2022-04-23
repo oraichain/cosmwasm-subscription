@@ -29,7 +29,15 @@ fn try_subscribe(
     let payment_option =
         state_reads::is_valid_subscription_option(deps.as_ref(), subscription_option)?;
 
-    if payment_option.price == info.funds[0] {
+    if info.funds.len() > 1 {
+        return Err(ContractError::SingleCurrencyPayable {});
+    } else if info.funds.len() == 0 {
+        return Err(ContractError::PayableContract {});
+    }
+
+    if payment_option.price.denom != info.funds[0].denom {
+        return Err(ContractError::InvalidFundsDenomination {});
+    } else if payment_option.price == info.funds[0] {
         let _subscription_expiration =
             state_writes::update_subscription_status(deps, env, info.sender, payment_option)?;
         return Ok(Response::new());
