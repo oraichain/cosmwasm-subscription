@@ -40,7 +40,7 @@ pub fn execute(
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
-        QueryMsg::SubcriptionStatus { addr } => {
+        QueryMsg::SubscriptionStatus { addr } => {
             to_binary(&query_subscription_status(deps, env, addr)?)
         }
         QueryMsg::SubscriptionOptions {} => to_binary(&query_subscription_options(deps)?),

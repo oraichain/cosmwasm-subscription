@@ -21,6 +21,29 @@ pub fn add_subcription_option(
     return Ok(());
 }
 
+pub fn remove_subcription_option(
+    deps: DepsMut,
+    subscription_option: PaymentOption,
+) -> Result<(), ContractError> {
+    SUBSCRIPTION_OPTIONS.update(
+        deps.storage,
+        |subscription_options| -> Result<_, ContractError> {
+            //subscription_options.push(subscription_option);
+
+            let subscription_options: Vec<PaymentOption> = subscription_options
+                .into_iter()
+                .filter(|elem| {
+                    elem.subscription_duration != subscription_option.subscription_duration
+                })
+                .collect();
+
+            return Ok(subscription_options);
+        },
+    )?;
+
+    return Ok(());
+}
+
 pub fn update_subscription_status(
     deps: DepsMut,
     env: Env,

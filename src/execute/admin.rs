@@ -27,6 +27,9 @@ pub fn dispatch_admin(
         AdminExecuteMsg::AddSubscriptionOption {
             subscription_option,
         } => try_add_subscription_option(deps, subscription_option),
+        AdminExecuteMsg::RemoveSubscriptionOption {
+            subscription_option,
+        } => try_remove_subscription_option(deps, subscription_option),
     }
 }
 
@@ -35,6 +38,15 @@ fn try_add_subscription_option(
     subscription_option: PaymentOption,
 ) -> Result<Response, ContractError> {
     state_writes::add_subcription_option(deps, subscription_option)?;
+
+    return Ok(Response::new());
+}
+
+fn try_remove_subscription_option(
+    deps: DepsMut,
+    subscription_option: PaymentOption,
+) -> Result<Response, ContractError> {
+    state_writes::remove_subcription_option(deps, subscription_option)?;
 
     return Ok(Response::new());
 }

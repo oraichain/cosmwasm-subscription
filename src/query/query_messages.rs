@@ -5,5 +5,5 @@ use serde::{Deserialize, Serialize};
 #[serde(rename_all = "snake_case")]
 pub enum QueryMsg {
     SubscriptionOptions {},
-    SubcriptionStatus { addr: String },
+    SubscriptionStatus { addr: String },
 }

@@ -131,7 +131,7 @@ mod tests {
 
         let _res = subscribe(deps.as_mut(), TEST_CREATOR, funds).unwrap();
 
-        let msg = QueryMsg::SubcriptionStatus {
+        let msg = QueryMsg::SubscriptionStatus {
             addr: TEST_CREATOR.to_string(),
         };
         let res = query(deps.as_ref(), mock_env(), msg).unwrap();
@@ -209,7 +209,7 @@ mod tests {
 
         let _res = subscribe(deps.as_mut(), TEST_CREATOR, funds).unwrap();
 
-        let msg = QueryMsg::SubcriptionStatus {
+        let msg = QueryMsg::SubscriptionStatus {
             addr: TEST_CREATOR.to_string(),
         };
         let _res = query(deps.as_ref(), mock_env(), msg).unwrap();
@@ -217,7 +217,7 @@ mod tests {
         let mut env = mock_env();
         env.block.time = env.block.time.plus_seconds(100000);
 
-        let msg = QueryMsg::SubcriptionStatus {
+        let msg = QueryMsg::SubscriptionStatus {
             addr: TEST_CREATOR.to_string(),
         };
         let res = query(deps.as_ref(), env, msg).unwrap();
@@ -239,7 +239,7 @@ mod tests {
 
         let _res = subscribe(deps.as_mut(), TEST_CREATOR, funds).unwrap();
 
-        let msg = QueryMsg::SubcriptionStatus {
+        let msg = QueryMsg::SubscriptionStatus {
             addr: TEST_CREATOR.to_string(),
         };
         let _res = query(deps.as_ref(), mock_env(), msg).unwrap();
@@ -247,7 +247,7 @@ mod tests {
         let mut env = mock_env();
         env.block.time = env.block.time.plus_seconds(100000);
 
-        let msg = QueryMsg::SubcriptionStatus {
+        let msg = QueryMsg::SubscriptionStatus {
             addr: TEST_CREATOR.to_string(),
         };
         let res = query(deps.as_ref(), env.clone(), msg).unwrap();
@@ -263,7 +263,7 @@ mod tests {
 
         let _res = subscribe(deps.as_mut(), TEST_CREATOR, funds).unwrap();
 
-        let msg = QueryMsg::SubcriptionStatus {
+        let msg = QueryMsg::SubscriptionStatus {
             addr: TEST_CREATOR.to_string(),
         };
         let res = query(deps.as_ref(), env, msg).unwrap();

@@ -11,6 +11,10 @@ pub enum AdminExecuteMsg {
         subscription_option: PaymentOption,
     },
 
+    RemoveSubscriptionOption {
+        subscription_option: PaymentOption,
+    },
+
     Withdraw {
         amount: String,
         denom: String,
