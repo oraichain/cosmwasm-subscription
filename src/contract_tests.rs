@@ -8,7 +8,7 @@ mod tests {
     use crate::error::ContractError;
     use crate::execute_messages::msg::ExecuteMsg;
     use crate::execute_messages::msg_admin::AdminExecuteMsg;
-    use crate::msg::InstantiateMsg;
+    use crate::instantiation::instantiate_messages::InstantiateMsg;
     use crate::query::query_messages::QueryMsg;
 
     use crate::contract::{execute, instantiate, query};
