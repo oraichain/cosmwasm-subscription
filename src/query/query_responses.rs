@@ -1,7 +1,7 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::structs::PaymentOption;
+use crate::structs::SubscriptionOptionRecord;
 
 #[derive(Serialize, Deserialize, Clone, PartialEq, JsonSchema, Debug)]
 pub struct SubscriptionStatusResponse {
@@ -11,5 +11,5 @@ pub struct SubscriptionStatusResponse {
 
 #[derive(Serialize, Deserialize, Clone, PartialEq, JsonSchema, Debug)]
 pub struct SubscriptionOptionsResponse {
-    pub subscription_options: Vec<PaymentOption>,
+    pub subscription_options: Vec<SubscriptionOptionRecord>,
 }

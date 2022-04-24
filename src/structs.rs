@@ -22,6 +22,12 @@ pub struct SubscriptionDuration {
 }
 
 #[derive(Serialize, Deserialize, Clone, PartialEq, JsonSchema, Debug)]
+pub struct SubscriptionOptionRecord {
+    pub id: u32,
+    pub payment_option: PaymentOption,
+}
+
+#[derive(Serialize, Deserialize, Clone, PartialEq, JsonSchema, Debug)]
 pub struct PaymentOption {
     pub subscription_duration: SubscriptionDuration,
     pub price: Coin,

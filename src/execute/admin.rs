@@ -24,29 +24,31 @@ pub fn dispatch_admin(
             amount,
             beneficiary,
         } => try_withdraw(denom, amount, beneficiary),
-        AdminExecuteMsg::AddSubscriptionOption {
-            subscription_option,
-        } => try_add_subscription_option(deps, subscription_option),
-        AdminExecuteMsg::RemoveSubscriptionOption {
-            subscription_option,
-        } => try_remove_subscription_option(deps, subscription_option),
+        AdminExecuteMsg::AddSubscriptionOption { payment_option } => {
+            try_add_subscription_option(deps, payment_option)
+        }
+        AdminExecuteMsg::RemoveSubscriptionOption { id_to_remove } => {
+            try_remove_subscription_option(deps, id_to_remove)
+        }
     }
 }
 
 fn try_add_subscription_option(
     deps: DepsMut,
-    subscription_option: PaymentOption,
+    payment_option: PaymentOption,
 ) -> Result<Response, ContractError> {
-    state_writes::add_subcription_option(deps, subscription_option)?;
+    let curr_id = state_reads::get_subscription_id_tracker(deps.as_ref())?;
+    state_writes::add_subcription_option(deps, payment_option, curr_id)?;
 
     return Ok(Response::new());
 }
 
 fn try_remove_subscription_option(
     deps: DepsMut,
-    subscription_option: PaymentOption,
+    //subscription_option: PaymentOption,
+    id_to_remove: u32,
 ) -> Result<Response, ContractError> {
-    state_writes::remove_subcription_option(deps, subscription_option)?;
+    state_writes::remove_subcription_option(deps, id_to_remove)?;
 
     return Ok(Response::new());
 }

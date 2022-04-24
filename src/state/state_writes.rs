@@ -1,18 +1,50 @@
 use cosmwasm_std::{Addr, DepsMut, Env};
 
-use crate::state::state_entries::{SUBSCRIPTIONS, SUBSCRIPTION_OPTIONS};
-use crate::structs::PaymentOption;
+use crate::state::state_entries::{SUBSCRIPTIONS, SUBSCRIPTION_OPTIONS_RECORDS};
+use crate::structs::{PaymentOption, SubscriptionOptionRecord};
 
 use crate::ContractError;
 
+use super::state_entries::SUBSCRIPTION_OPTIONS_ID_TRACKER;
+
 pub fn add_subcription_option(
     deps: DepsMut,
-    subscription_option: PaymentOption,
+    payment_option: PaymentOption,
+    curr_id_record: u32,
 ) -> Result<(), ContractError> {
-    SUBSCRIPTION_OPTIONS.update(
+    let subscription_record = SubscriptionOptionRecord {
+        id: curr_id_record,
+        payment_option: payment_option,
+    };
+
+    SUBSCRIPTION_OPTIONS_RECORDS.update(
         deps.storage,
         |mut subscription_options| -> Result<_, ContractError> {
-            subscription_options.push(subscription_option);
+            subscription_options.push(subscription_record);
+
+            return Ok(subscription_options);
+        },
+    )?;
+
+    increment_tracking_id_subscription_options(deps)?;
+
+    return Ok(());
+}
+
+pub fn remove_subcription_option(
+    deps: DepsMut,
+    //subscription_option: PaymentOption,
+    target_id: u32,
+) -> Result<(), ContractError> {
+    SUBSCRIPTION_OPTIONS_RECORDS.update(
+        deps.storage,
+        |subscription_options| -> Result<_, ContractError> {
+            //subscription_options.push(subscription_option);
+
+            let subscription_options: Vec<SubscriptionOptionRecord> = subscription_options
+                .into_iter()
+                .filter(|elem| elem.id != target_id)
+                .collect();
 
             return Ok(subscription_options);
         },
@@ -21,25 +53,10 @@ pub fn add_subcription_option(
     return Ok(());
 }
 
-pub fn remove_subcription_option(
-    deps: DepsMut,
-    subscription_option: PaymentOption,
-) -> Result<(), ContractError> {
-    SUBSCRIPTION_OPTIONS.update(
-        deps.storage,
-        |subscription_options| -> Result<_, ContractError> {
-            //subscription_options.push(subscription_option);
-
-            let subscription_options: Vec<PaymentOption> = subscription_options
-                .into_iter()
-                .filter(|elem| {
-                    elem.subscription_duration != subscription_option.subscription_duration
-                })
-                .collect();
-
-            return Ok(subscription_options);
-        },
-    )?;
+pub fn increment_tracking_id_subscription_options(deps: DepsMut) -> Result<(), ContractError> {
+    SUBSCRIPTION_OPTIONS_ID_TRACKER.update(deps.storage, |value| -> Result<_, ContractError> {
+        return Ok(value + 1);
+    })?;
 
     return Ok(());
 }

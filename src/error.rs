@@ -27,4 +27,7 @@ pub enum ContractError {
 
     #[error("Subscription Option Does not exist")]
     InvalidSubcriptionOption {},
+
+    #[error("No subscription available with given id not exist")]
+    InvalidSubcriptionId {},
 }

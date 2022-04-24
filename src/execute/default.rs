@@ -4,8 +4,6 @@ use crate::error::ContractError;
 use crate::execute_messages::msg::ExecuteMsg;
 use crate::state::{state_reads, state_writes};
 
-use crate::structs::SubscriptionDuration;
-
 pub fn dispatch_default(
     deps: DepsMut,
     env: Env,
@@ -13,9 +11,9 @@ pub fn dispatch_default(
     msg: ExecuteMsg,
 ) -> Result<Response, ContractError> {
     match msg {
-        ExecuteMsg::Subscribe {
-            subscription_option,
-        } => try_subscribe(deps, env, info, subscription_option),
+        ExecuteMsg::Subscribe { id_subscription } => {
+            try_subscribe(deps, env, info, id_subscription)
+        }
         _ => Err(ContractError::Never {}),
     }
 }
@@ -24,10 +22,10 @@ fn try_subscribe(
     deps: DepsMut,
     env: Env,
     info: MessageInfo,
-    subscription_option: SubscriptionDuration,
+    id_subscription: u32,
 ) -> Result<Response, ContractError> {
-    let payment_option =
-        state_reads::is_valid_subscription_option(deps.as_ref(), subscription_option)?;
+    let subscription_option =
+        state_reads::is_valid_subscription_option2(deps.as_ref(), id_subscription)?;
 
     if info.funds.len() > 1 {
         return Err(ContractError::SingleCurrencyPayable {});
@@ -35,6 +33,7 @@ fn try_subscribe(
         return Err(ContractError::PayableContract {});
     }
 
+    let payment_option = subscription_option.payment_option;
     if payment_option.price.denom != info.funds[0].denom {
         return Err(ContractError::InvalidFundsDenomination {});
     } else if payment_option.price == info.funds[0] {

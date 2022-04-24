@@ -8,11 +8,12 @@ use crate::structs::PaymentOption;
 pub enum AdminExecuteMsg {
     // admin
     AddSubscriptionOption {
-        subscription_option: PaymentOption,
+        payment_option: PaymentOption,
     },
 
     RemoveSubscriptionOption {
-        subscription_option: PaymentOption,
+        //subscription_option: PaymentOption,
+        id_to_remove: u32,
     },
 
     Withdraw {
