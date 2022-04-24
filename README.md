@@ -2,7 +2,58 @@
 
 ## Overview  
 
-Contract that implements a subscription system. Admin defines subscription options for a given price.   
+Contract that implements a subscription system. Admin defines subscription options for a given price. These options are given an ID and registered as SubscriptionOptionRecord.  
+User therefore call Subscribe{ id_subscription } with necessary funds to subscribe for a given duration.  
+
+## How to Use  
+Admin defines subscription durations   
+```json
+// example: 30 days for 1 UST  
+{
+    "admin": {
+        "add_subscription_option": {
+            "payment_option": {
+                "subscription_duration": {
+                    "amount_units": 30,
+                    "duration_unit": "day"
+                },
+                "price": {
+                    "denom": "uusd",
+                    "amount": "5000000"
+                }
+            }
+        }
+    }
+}
+
+```
+
+This subscription option will be given an ID. User can subscribe by referencing it, and sending the appropriate funds.  
+This will set the user as subscribed, with an expiry at current timestamp + 30 days (since the subscription is for 30 days).      
+
+```json
+{
+    "subscribe": {
+        "id_subscription": 0
+    }
+}
+
+```
+
+The admin can also delete subscription options 
+
+```json
+{
+    "admin": {
+        "remove_subscription_option": {
+            "id_to_remove": 0
+        }
+    }
+}
+```
+
+See execute_messages folder for rust implementation of messages.  
+Structs and enums are in structs.rs 
 
 ## Subscription Options  
 
@@ -29,6 +80,13 @@ pub struct PaymentOption {
     pub subscription_duration: SubscriptionDuration,
     pub price: Coin,
 }
+
+#[derive(Serialize, Deserialize, Clone, PartialEq, JsonSchema, Debug)]
+pub struct SubscriptionOptionRecord {
+    pub id: u32,
+    pub payment_option: PaymentOption,
+}
+
 ```
 
 This gives the admin flexibility in defining subscription durations.   
