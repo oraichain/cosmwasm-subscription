@@ -6,10 +6,10 @@ Contract that implements a subscription system. Admin defines subscription optio
 User therefore call Subscribe{ id_subscription } with necessary funds to subscribe for a given duration.  
 
 Contract is live on Testnet  
-CodeId: 66741
+CodeId: 66741  
 Address: terra1cdt0gmccw3dlncaw7y7zj670kyy488mc4tnk4t    
 
-See it on  
+See it with sample transactions on:      
 TerraFinder: https://finder.terra.money/testnet/address/terra1cdt0gmccw3dlncaw7y7zj670kyy488mc4tnk4t     
 Terrascope:  https://terrasco.pe/testnet/address/terra1cdt0gmccw3dlncaw7y7zj670kyy488mc4tnk4t     
 
