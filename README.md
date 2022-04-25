@@ -5,6 +5,16 @@
 Contract that implements a subscription system. Admin defines subscription options for a given price. These options are given an ID and registered as SubscriptionOptionRecord.  
 User therefore call Subscribe{ id_subscription } with necessary funds to subscribe for a given duration.  
 
+Contract is live on Testnet  
+CodeId: 66741
+Address: terra1cdt0gmccw3dlncaw7y7zj670kyy488mc4tnk4t    
+
+See it on  
+TerraFinder: https://finder.terra.money/testnet/address/terra1cdt0gmccw3dlncaw7y7zj670kyy488mc4tnk4t     
+Terrascope:  https://terrasco.pe/testnet/address/terra1cdt0gmccw3dlncaw7y7zj670kyy488mc4tnk4t     
+
+
+
 ## How to Use  
 Admin defines subscription durations   
 ```json
