@@ -1,10 +1,7 @@
-use schemars::JsonSchema;
-use serde::{Deserialize, Serialize};
-
+use cosmwasm_schema::cw_serde;
 use cosmwasm_std::Coin;
 
-#[derive(Serialize, Deserialize, Clone, PartialEq, JsonSchema, Debug)]
-#[serde(rename_all = "snake_case")]
+#[cw_serde]
 pub enum DurationUnit {
     Second,
     Minute,
@@ -15,19 +12,19 @@ pub enum DurationUnit {
     Year,
 }
 
-#[derive(Serialize, Deserialize, Clone, PartialEq, JsonSchema, Debug)]
+#[cw_serde]
 pub struct SubscriptionDuration {
     pub amount_units: u64,
     pub duration_unit: DurationUnit,
 }
 
-#[derive(Serialize, Deserialize, Clone, PartialEq, JsonSchema, Debug)]
+#[cw_serde]
 pub struct SubscriptionOptionRecord {
     pub id: u32,
     pub payment_option: PaymentOption,
 }
 
-#[derive(Serialize, Deserialize, Clone, PartialEq, JsonSchema, Debug)]
+#[cw_serde]
 pub struct PaymentOption {
     pub subscription_duration: SubscriptionDuration,
     pub price: Coin,

@@ -9,6 +9,7 @@ use crate::execute::admin::dispatch_admin;
 use crate::execute::default::dispatch_default;
 use crate::execute_messages::msg::ExecuteMsg;
 
+use crate::migrate::migrate_messages::MigrateMsg;
 use crate::query::query_execute::{query_subscription_options, query_subscription_status};
 use crate::query::query_messages::QueryMsg;
 
@@ -45,4 +46,9 @@ pub fn query(deps: Deps, env: Env, msg: QueryMsg) -> StdResult<Binary> {
         }
         QueryMsg::SubscriptionOptions {} => to_binary(&query_subscription_options(deps)?),
     }
+}
+
+#[cfg_attr(not(feature = "library"), entry_point)]
+pub fn migrate(_deps: DepsMut, _env: Env, _msg: MigrateMsg) -> StdResult<Response> {
+    Ok(Response::default())
 }

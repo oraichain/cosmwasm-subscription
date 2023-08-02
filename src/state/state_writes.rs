@@ -14,7 +14,7 @@ pub fn add_subcription_option(
 ) -> Result<(), ContractError> {
     let subscription_record = SubscriptionOptionRecord {
         id: curr_id_record,
-        payment_option: payment_option,
+        payment_option,
     };
 
     SUBSCRIPTION_OPTIONS_RECORDS.update(

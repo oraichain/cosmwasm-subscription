@@ -1,6 +1,8 @@
 #[cfg(test)]
 mod tests {
-    use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info, MockApi, MockQuerier};
+    use cosmwasm_std::testing::{
+        mock_dependencies_with_balance, mock_env, mock_info, MockApi, MockQuerier,
+    };
     use cosmwasm_std::{
         coins, from_binary, Coin, DepsMut, MemoryStorage, OwnedDeps, Response, Uint128,
     };
@@ -28,7 +30,7 @@ mod tests {
     const TEST_INVALID_DENOM: &str = "notuusd";
 
     fn instantiate_contract() -> OwnedDeps<MemoryStorage, MockApi, MockQuerier> {
-        let mut deps = mock_dependencies(&[Coin {
+        let mut deps = mock_dependencies_with_balance(&[Coin {
             denom: TEST_DENOM.to_string(),
             amount: Uint128::from(100u64),
         }]);

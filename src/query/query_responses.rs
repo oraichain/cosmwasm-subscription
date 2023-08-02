@@ -1,15 +1,14 @@
-use schemars::JsonSchema;
-use serde::{Deserialize, Serialize};
+use cosmwasm_schema::cw_serde;
 
 use crate::structs::SubscriptionOptionRecord;
 
-#[derive(Serialize, Deserialize, Clone, PartialEq, JsonSchema, Debug)]
+#[cw_serde]
 pub struct SubscriptionStatusResponse {
     pub is_valid: bool,
     pub expiration_timestamp: u64,
 }
 
-#[derive(Serialize, Deserialize, Clone, PartialEq, JsonSchema, Debug)]
+#[cw_serde]
 pub struct SubscriptionOptionsResponse {
     pub subscription_options: Vec<SubscriptionOptionRecord>,
 }
