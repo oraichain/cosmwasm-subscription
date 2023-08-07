@@ -1,4 +1,3 @@
-
 use cosmwasm_std::testing::{
     mock_dependencies_with_balance, mock_env, mock_info, MockApi, MockQuerier,
 };
@@ -50,7 +49,7 @@ fn add_default_subscription_option(deps: DepsMut) -> Result<Response, ContractEr
     };
 
     let subscription_option = PaymentOption {
-        subscription_duration: subscription_duration,
+        subscription_duration,
         price: Coin {
             denom: TEST_DENOM.to_string(),
             amount: Uint128::from(TEST_PRICE),
@@ -158,7 +157,7 @@ fn subscribe_rejected_invalid_currency() {
 }
 
 #[test]
-fn subscribe_rejected_invalid_funds_amoun() {
+fn subscribe_rejected_invalid_funds_amount() {
     let mut deps = instantiate_contract();
     add_default_subscription_option(deps.as_mut()).unwrap();
 
@@ -374,7 +373,7 @@ fn subscribe_two_options_successful() {
     };
 
     let subscription_option = PaymentOption {
-        subscription_duration: subscription_duration,
+        subscription_duration,
         price: Coin {
             denom: TEST_DENOM.to_string(),
             amount: Uint128::from(TEST_PRICE),

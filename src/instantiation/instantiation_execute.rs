@@ -7,7 +7,7 @@ use crate::state::state_entries::{
 use crate::ContractError;
 
 // version info for migration info
-const CONTRACT_NAME: &str = "azoyalabs:subscription";
+const CONTRACT_NAME: &str = "oraichain:subscription";
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 pub fn instantiate_contract(deps: DepsMut, info: MessageInfo) -> Result<Response, ContractError> {
